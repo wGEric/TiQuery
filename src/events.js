@@ -50,5 +50,9 @@ TiQuery.fn.extend({
    
    twofingertap: function(fn) {
 	   this.bind('twofingertap', fn);
-   }
+   },
+   
+   scroll: function(fn) {
+		this.bind('scroll', fn);
+	}
 });

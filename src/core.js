@@ -408,6 +408,18 @@ map: function( elems, callback, arg ) {
 	return ret.concat.apply( [], ret );
 },
 
+clone: function(obj, deep) {
+	var newObj = {};
+	
+	if (deep == true) {
+		TiQuery.fn.extend(true, newObj, obj);
+	} else {
+		TiQuery.fn.extend(newObj, obj);
+	}
+	
+	return newObj;
+},
+
 // A global GUID counter for objects
 guid: 1,
 
