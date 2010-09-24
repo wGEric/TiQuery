@@ -1,0 +1,58 @@
+<project name="TiQuery" default="tiquery" basedir=".">
+	<!-- setup -->
+	<property description="Source Folder" name="SRC_DIR" value="src"  />
+    <property description="Files for parsing etc." name="BUILD_DIR" value="build" />
+    <property description="YUICompressor" name="YUICompressor" value="${BUILD_DIR}/yuicompressor-2.4.2.jar" />
+	
+	<loadfile description="Version to build" property="version" srcfile="version.txt" />
+
+    <property description="Folder for tiquery, min, lite and packed target" name="DIST_DIR" value="./dist" />
+
+    <!-- Files names for distribution -->
+    <property name="TiQ" value="${DIST_DIR}/tiquery.js" />
+    <property name="TiQ_LITE" value="${DIST_DIR}/tiquery.lite.js" />
+    <property name="TiQ_MIN" value="${DIST_DIR}/tiquery.min.js" />
+    <property name="TiQ_PACK" value="${DIST_DIR}/tiquery.pack.js" />
+	
+	<!-- main build for tiquery -->	
+	<target name="tiquery" description="Main TiQuery build, concatenates source files and replaces @VERSION">
+        <echo message="Building ${TiQ}" />
+        <mkdir dir="${DIST_DIR}" />
+        <concat destfile="${TiQ}">
+            <fileset dir="${SRC_DIR}" includes="intro.js" />
+            <fileset dir="${SRC_DIR}" includes="core.js" />
+            <fileset dir="${SRC_DIR}" includes="events.js" />
+            <fileset dir="${SRC_DIR}" includes="xhr.js" />
+            <fileset dir="${SRC_DIR}" includes="outro.js" />
+        </concat>
+    	<replaceregexp match="@VERSION" replace="${version}" flags="g" byline="true" file="${TiQ}" />
+		<!--replaceregexp match="Date: " replace="Date: ${date}" file="${TiQ}" />
+        <echo message="${TiQ} built." /-->
+    </target>
+	
+	<!-- minified package -->
+	<target name="min" depends="tiquery" description="Remove all comments and whitespace, no compression, great in combination with GZip">
+        <echo message="Building ${TiQ_MIN}" />
+		<apply executable="java" parallel="false" verbose="true" dest="${DIST_DIR}">
+			<fileset dir="${DIST_DIR}">
+				<include name="tiquery.js" />
+			</fileset>
+			<arg line="-jar" />
+			<arg path="${YUICompressor}" />
+			<arg value="--charset" />
+			<arg value="ANSI" />
+			<arg value="-o" />
+			<targetfile />
+			<mapper type="glob" from="tiquery.js" to="tiquery.min.js" />
+		</apply>
+        <echo message="${TiQ_MIN} built." />
+    </target>
+	
+	<target name="clean">
+        <delete dir="${DIST_DIR}" />
+    </target>
+
+    <target name="all" depends="clean,tiquery,min">
+        <echo message="Build complete." />
+    </target>
+</project>
