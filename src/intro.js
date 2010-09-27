@@ -11,4 +11,3 @@
  */
 
 (function(Titanium, undefined) {
-	
