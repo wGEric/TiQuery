@@ -412,9 +412,9 @@ clone: function(obj, deep) {
 	var newObj = {};
 	
 	if (deep == true) {
-		TiQuery.fn.extend(true, newObj, obj);
+		TiQuery.fn.extend(true, obj, newObj);
 	} else {
-		TiQuery.fn.extend(newObj, obj);
+		TiQuery.fn.extend(obj, newObj);
 	}
 	
 	return newObj;
