@@ -1,7 +1,7 @@
 /*!
  * TiQuery Javascript Library for Titanium v@VERSION
  *
- * Copyright 2010
+ * Copyright 2010 Eric Faerber, Natural Code Project
  * Released under GPL Version 2
  *
  * Includes large portions of jQuery

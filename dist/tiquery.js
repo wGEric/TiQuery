@@ -1,7 +1,7 @@
 /*!
  * TiQuery Javascript Library for Titanium v0.0.1
  *
- * Copyright 2010
+ * Copyright 2010 Eric Faerber, Natural Code Project
  * Released under GPL Version 2
  *
  * Includes large portions of jQuery
@@ -11,7 +11,7 @@
  */
 
 (function(Titanium, undefined) {
-	var TiQuery = function(selector) {
+var TiQuery = function(selector) {
 	return new TiQuery.fn.init(selector);
 },
 
@@ -421,6 +421,18 @@ map: function( elems, callback, arg ) {
 	return ret.concat.apply( [], ret );
 },
 
+clone: function(obj, deep) {
+	var newObj = {};
+	
+	if (deep == true) {
+		TiQuery.fn.extend(true, obj, newObj);
+	} else {
+		TiQuery.fn.extend(obj, newObj);
+	}
+	
+	return newObj;
+},
+
 // A global GUID counter for objects
 guid: 1,
 
@@ -460,227 +472,333 @@ function now() {
 * events
 */
 TiQuery.fn.extend({
-   /**
-	* binds an event to an object
-	*/
-   bind: function(type, fn) {
-	   this[0].addEventListener(type, fn);
-   },
-   
-   /**
-	* helper functions
-	*/
-   click: function(fn) {
-	   this.bind('click', fn);
-   },
-   
-   dblclick: function(fn) {
-	   this.bind('dblclick', fn);
-   },
-   
-   doubletap: function(fn) {
-	   this.bind('doubletap', fn);
-   },
-   
-   singletap: function(fn) {
-	   this.bind('singletap', fn);
-   },
-   
-   swipe: function(fn) {
-	   this.bind('swipe', fn);
-   },
-   
-   touchcancel: function(fn) {
-	   this.bind('touchcancel', fn);
-   },
-   
-   touchend: function(fn) {
-	   this.bind('touchend', fn);
-   },
-   
-   touchmove: function(fn) {
-	   this.bind('touchmove', fn);
-   },
-   
-   touchstart: function(fn) {
-	   this.bind('touchstart', fn);
-   },
-   
-   twofingertap: function(fn) {
-	   this.bind('twofingertap', fn);
-   }
+	/**
+	 * binds an event to an object
+	 */
+	bind: function(type, fn) {
+		this[0].addEventListener(type, fn);
+	
+		return this;
+	},
+	
+	/**
+	 * removes an event
+	 */
+	unbind: function(type) {
+		this[0].removeEventListener(type);
+		
+		return this;
+	},
+	
+	/**
+	 * triggers an event on an object
+	 */
+	trigger: function(type) {
+		this[0].fireEvent(type);
+		
+		return this;
+	},
+	
+	/**
+	 * helper functions for common events. Other events must call bind or trigger directly.
+	 */
+	click: function(fn) {
+		if (fn == null) {
+			this.trigger('click');
+		} else {	  
+			this.bind('click', fn);
+		}
+		return this;
+	},
+	
+	dblclick: function(fn) {
+		if (fn == null) {
+			this.trigger('dblclick');
+		} else {	  
+			this.bind('dblclick', fn);
+		}
+		return this;
+	},
+	
+	doubletap: function(fn) {
+		if (fn == null) {
+			this.trigger('doubletap');
+		} else {	  
+			this.bind('doubletap', fn);
+		}
+		return this;
+	},
+	
+	singletap: function(fn) {
+		if (fn == null) {
+			this.trigger('singletap');
+		} else {	  
+			this.bind('singletap', fn);
+		}
+		return this;
+	},
+	
+	swipe: function(fn) {
+		if (fn == null) {
+			this.trigger('swipe');
+		} else {	  
+			this.bind('swipe', fn);
+		}
+		return this;
+	},
+	
+	touchcancel: function(fn) {
+		if (fn == null) {
+			this.trigger('touchcancel');
+		} else {	  
+			this.bind('touchcancel', fn);
+		}
+		return this;
+	},
+	
+	touchend: function(fn) {
+		if (fn == null) {
+			this.trigger('touchend');
+		} else {	  
+			this.bind('touchend', fn);
+		}
+		return this;
+	},
+	
+	touchmove: function(fn) {
+		if (fn == null) {
+			this.trigger('touchmove');
+		} else {	  
+			this.bind('touchmove', fn);
+		}
+		return this;
+	},
+	
+	touchstart: function(fn) {
+		if (fn == null) {
+			this.trigger('touchstart');
+		} else {	  
+			this.bind('touchstart', fn);
+		}
+		return this;
+	},
+	
+	twofingertap: function(fn) {
+		if (fn == null) {
+			this.trigger('twofingertap');
+		} else {	  
+			this.bind('twofingertap', fn);
+		}
+		return this;
+	},
+	
+	scroll: function(fn) {
+		if (fn == null) {
+			this.trigger('scroll');
+		} else {	  
+			this.bind('scroll', fn);
+		}
+		return this;
+	},
+	
+	cancel: function(fn) {
+		if (fn == null) {
+			this.trigger('cancel');
+		} else {	  
+			this.bind('cancel', fn);
+		}
+		return this;
+	},
+	
+	orientationchange: function(fn) {
+		if (fn == null) {
+			this.trigger('orientationchange');
+		} else {	  
+			this.bind('orientationchange', fn);
+		}
+		return this;
+	},
+	
+	shake: function(fn) {
+		if (fn == null) {
+			this.trigger('shake');
+		} else {	  
+			this.bind('shake', fn);
+		}
+		return this;
+	}
 });
 /**
 * XHR
 */
 TiQuery.fn.extend({
-   xhrSettings: {
-	   type:		'get',
-	   dataType:	'',
-	   onError:	null,
-	   onLoad:		null,
-	   onDataStream: null,
-	   onReadyStateChange: null,
-	   onSendStream: null
-   },
-   
-   xhr: function(origSettings) {
-	   var s = TiQuery.extend(true, {}, TiQuery.fn.xhrSettings, origSettings);
-	   
-	   if (s.url == null) {
-		   return false;
-	   }
-
-	   s.type = s.type.toUpperCase();
-	   s.dataType = s.dataType.toUpperCase();
-	   
-	   // create the connection
-	   var xhr = Titanium.Network.createHTTPClient();
-	   
-	   // set callbacks
-	   xhr.ondatastream = s.onDataStream;
-	   xhr.onsendstream = s.onSendStream;
-	   xhr.onreadystatechange = s.onReadyStateChange;
-	   
-	   // on load
-	   xhr.onload = function(event) {
-		   Titanium.API.info('XHR completed');
-		   
-		   var results = false;
-		   
-		   if (s.dataType == 'XML') {
-			   // data is XML so parse it
-			   try {
-				   results = this.responseXML;
-			   }
-			   catch(E) {
-				   // not valid XML
-				   Titanium.API.error(E);
-				   results = false;
-			   }
-		   } else if (s.dataType == 'JSON') {
-			   // data is JSON so parse it
-			   results = TiQuery.fn.parseJSON(this.responseText);
-		   } else {
-			   // no data type specified so don't do anything with it
-			   results = this.responseText;
-		   }
-		   
-		   if (TiQuery.fn.isFunction(s.onLoad)) {
-			   s.onLoad(results, xhr, event);
-		   }
-	   }
-	   
-	   // on error
-	   xhr.onerror = function(event) {
-		   Titanium.API.error('XHR error: ' + event.error);
-		   
-		   if (TiQuery.fn.isFunction(s.onError)) {
-			   s.onError(xhr, event);
-		   }
-	   }
-	   
-	   // open and send the data
-	   xhr.open(s.type, s.url);
-	   xhr.send(s.data);
-	   
-	   // clear the object
-	   xhr = null;
-   },
-   
-   /**
-	* shorthand for GET requests
-	*/
-   get: function(url, data, fn) {
-	   if (TiQuery.fn.isFunction(data)) {
-		   fn = data;
-		   data = {};
-	   }
-	   
-	   this.xhr({
-		   type:	'get',
-		   url:	url,
-		   data:	data,
-		   onLoad:	fn
-	   });
-   },
-   
-   getJSON: function(url, data, fn) {
-	   if (TiQuery.fn.isFunction(data)) {
-		   fn = data;
-		   data = {};
-	   }
-	   
-	   this.xhr({
-		   type:	'get',
-		   dataType: 'JSON',
-		   url:	url,
-		   data:	data,
-		   onLoad:	fn
-	   });
-   },
-   
-   getXML: function(url, data, fn) {
-	   if (TiQuery.fn.isFunction(data)) {
-		   fn = data;
-		   data = {};
-	   }
-	   
-	   this.xhr({
-		   type:	'get',
-		   dataType: 'XML',
-		   url:	url,
-		   data:	data,
-		   onLoad:	fn
-	   });
-   },
-   
-   /**
-	* shorthand for POST
-	*/
-   post: function(url, data, fn) {
-	   if (TiQuery.fn.isFunction(data)) {
-		   fn = data;
-		   data = {};
-	   }
-	   
-	   this.xhr({
-		   type:	'post',
-		   url:	url,
-		   data:	data,
-		   onLoad:	fn
-	   });
-   },
-   
-   postJSON: function(url, data, fn) {
-	   if (TiQuery.fn.isFunction(data)) {
-		   fn = data;
-		   data = {};
-	   }
-	   
-	   this.xhr({
-		   type:	'post',
-		   dataType: 'JSON',
-		   url:	url,
-		   data:	data,
-		   onLoad:	fn
-	   });
-   },
-   
-   postXML: function(url, data, fn) {
-	   if (TiQuery.fn.isFunction(data)) {
-		   fn = data;
-		   data = {};
-	   }
-	   
-	   this.xhr({
-		   type:	'post',
-		   dataType: 'XML',
-		   url:	url,
-		   data:	data,
-		   onLoad:	fn
-	   });
-   }
+	xhrSettings: {
+		type:		'get',
+		dataType:	'',
+		onError:	null,
+		onLoad:		null,
+		onDataStream: null,
+		onReadyStateChange: null,
+		onSendStream: null
+	},
+	
+	xhr: function(origSettings) {
+		var s = TiQuery.extend(true, {}, TiQuery.fn.xhrSettings, origSettings);
+		
+		if (s.url == null) {
+			return false;
+		}
+	
+		s.type = s.type.toUpperCase();
+		s.dataType = s.dataType.toUpperCase();
+		
+		// create the connection
+		var xhr = Titanium.Network.createHTTPClient();
+		
+		// set callbacks
+		xhr.ondatastream = s.onDataStream;
+		xhr.onsendstream = s.onSendStream;
+		xhr.onreadystatechange = s.onReadyStateChange;
+		
+		// on load
+		xhr.onload = function(event) {
+			Titanium.API.info('XHR completed');
+			
+			var results = false;
+			
+			if (s.dataType == 'XML') {
+				// data is XML so parse it
+				try {
+					results = this.responseXML;
+				}
+				catch(E) {
+					// not valid XML
+					Titanium.API.error(E);
+					results = false;
+				}
+			} else if (s.dataType == 'JSON') {
+				// data is JSON so parse it
+				results = TiQuery.fn.parseJSON(this.responseText);
+			} else {
+				// no data type specified so don't do anything with it
+				results = this.responseText;
+			}
+			
+			if (TiQuery.fn.isFunction(s.onLoad)) {
+				s.onLoad(results, xhr, event);
+			}
+		}
+		
+		// on error
+		xhr.onerror = function(event) {
+			Titanium.API.error('XHR error: ' + event.error);
+			
+			if (TiQuery.fn.isFunction(s.onError)) {
+				s.onError(xhr, event);
+			}
+		}
+		
+		// open and send the data
+		xhr.open(s.type, s.url);
+		xhr.send(s.data);
+		
+		// clear the object
+		xhr = null;
+	},
+	
+	/**
+	 * shorthand for GET requests
+	 */
+	get: function(url, data, fn) {
+		if (TiQuery.fn.isFunction(data)) {
+			fn = data;
+			data = {};
+		}
+		
+		this.xhr({
+			type:	'get',
+			url:	url,
+			data:	data,
+			onLoad:	fn
+		});
+	},
+	
+	getJSON: function(url, data, fn) {
+		if (TiQuery.fn.isFunction(data)) {
+			fn = data;
+			data = {};
+		}
+		
+		this.xhr({
+			type:	'get',
+			dataType: 'JSON',
+			url:	url,
+			data:	data,
+			onLoad:	fn
+		});
+	},
+	
+	getXML: function(url, data, fn) {
+		if (TiQuery.fn.isFunction(data)) {
+			fn = data;
+			data = {};
+		}
+		
+		this.xhr({
+			type:	'get',
+			dataType: 'XML',
+			url:	url,
+			data:	data,
+			onLoad:	fn
+		});
+	},
+	
+	/**
+	 * shorthand for POST
+	 */
+	post: function(url, data, fn) {
+		if (TiQuery.fn.isFunction(data)) {
+			fn = data;
+			data = {};
+		}
+		
+		this.xhr({
+			type:	'post',
+			url:	url,
+			data:	data,
+			onLoad:	fn
+		});
+	},
+	
+	postJSON: function(url, data, fn) {
+		if (TiQuery.fn.isFunction(data)) {
+			fn = data;
+			data = {};
+		}
+		
+		this.xhr({
+			type:	'post',
+			dataType: 'JSON',
+			url:	url,
+			data:	data,
+			onLoad:	fn
+		});
+	},
+	
+	postXML: function(url, data, fn) {
+		if (TiQuery.fn.isFunction(data)) {
+			fn = data;
+			data = {};
+		}
+		
+		this.xhr({
+			type:	'post',
+			dataType: 'XML',
+			url:	url,
+			data:	data,
+			onLoad:	fn
+		});
+	}
 });
 	Titanium.TiQuery = Titanium.$ = TiQuery;
 })(Titanium);
