@@ -23,6 +23,7 @@
             <fileset dir="${SRC_DIR}" includes="core.js" />
             <fileset dir="${SRC_DIR}" includes="events.js" />
             <fileset dir="${SRC_DIR}" includes="xhr.js" />
+            <fileset dir="${SRC_DIR}" includes="titanium.js" />
             <fileset dir="${SRC_DIR}" includes="outro.js" />
         </concat>
     	<replaceregexp match="@VERSION" replace="${version}" flags="g" byline="true" file="${TiQ}" />

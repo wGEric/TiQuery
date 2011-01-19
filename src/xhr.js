@@ -33,7 +33,7 @@
 			
 			// on load
 			xhr.onload = function(event) {
-				Titanium.API.info('XHR completed');
+				Titanium.API.debug('XHR complete');
 				
 				var results = false;
 				
