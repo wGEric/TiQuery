@@ -9,11 +9,10 @@
 		registerEvent: function(event) {		
 			TiQuery.fn[event] = function(fn) {
 				if (fn == null) {
-					this.trigger(event);
+					return this.trigger(event);
 				} else {	  
-					this.bind(event, fn);
+					return this.bind(event, fn);
 				}
-				return TiQuery;
 			}
 		},
 		
