@@ -10,4 +10,4 @@
  * Dual licensed under the MIT or GPL Version 2 licenses.
  */
 
-(function(Titanium, undefined) {
+(function(global, Titanium, undefined) {

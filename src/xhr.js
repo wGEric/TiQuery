@@ -1,172 +1,111 @@
 /**
 * XHR
 */
-TiQuery.fn.extend({
-	xhrSettings: {
-		type:		'get',
-		dataType:	'',
-		onError:	null,
-		onLoad:		null,
-		onDataStream: null,
-		onReadyStateChange: null,
-		onSendStream: null
-	},
-	
-	xhr: function(origSettings) {
-		var s = TiQuery.extend(true, {}, TiQuery.fn.xhrSettings, origSettings);
+(function(TiQuery) {
+	TiQuery.extend({
+		xhrSettings: {
+			type:		'get',
+			dataType:	'',
+			onError:	null,
+			onLoad:		null,
+			onDataStream: null,
+			onReadyStateChange: null,
+			onSendStream: null
+		},
 		
-		if (s.url == null) {
-			return false;
-		}
-	
-		s.type = s.type.toUpperCase();
-		s.dataType = s.dataType.toUpperCase();
-		
-		// create the connection
-		var xhr = Titanium.Network.createHTTPClient();
-		
-		// set callbacks
-		xhr.ondatastream = s.onDataStream;
-		xhr.onsendstream = s.onSendStream;
-		xhr.onreadystatechange = s.onReadyStateChange;
-		
-		// on load
-		xhr.onload = function(event) {
-			Titanium.API.info('XHR completed');
+		xhr: function(origSettings) {
+			var s = TiQuery.extend(true, {}, TiQuery.xhrSettings, origSettings);
 			
-			var results = false;
+			if (s.url == null) {
+				return false;
+			}
+		
+			s.type = s.type.toUpperCase();
+			s.dataType = s.dataType.toUpperCase();
 			
-			if (s.dataType == 'XML') {
-				// data is XML so parse it
-				try {
-					results = this.responseXML;
+			// create the connection
+			var xhr = Titanium.Network.createHTTPClient();
+			
+			// set callbacks
+			xhr.ondatastream = s.onDataStream;
+			xhr.onsendstream = s.onSendStream;
+			xhr.onreadystatechange = s.onReadyStateChange;
+			
+			// on load
+			xhr.onload = function(event) {
+				Titanium.API.info('XHR completed');
+				
+				var results = false;
+				
+				if (s.dataType == 'XML') {
+					// data is XML so parse it
+					try {
+						results = this.responseXML;
+					}
+					catch(E) {
+						// not valid XML
+						Titanium.API.error(E);
+						results = false;
+					}
+				} else if (s.dataType == 'JSON') {
+					// data is JSON so parse it
+					results = TiQuery.parseJSON(this.responseText);
+				} else {
+					// no data type specified so don't do anything with it
+					results = this.responseText;
 				}
-				catch(E) {
-					// not valid XML
-					Titanium.API.error(E);
-					results = false;
+				
+				if (TiQuery.isFunction(s.onLoad)) {
+					s.onLoad(results, xhr, event);
 				}
-			} else if (s.dataType == 'JSON') {
-				// data is JSON so parse it
-				results = TiQuery.fn.parseJSON(this.responseText);
-			} else {
-				// no data type specified so don't do anything with it
-				results = this.responseText;
 			}
 			
-			if (TiQuery.fn.isFunction(s.onLoad)) {
-				s.onLoad(results, xhr, event);
+			// on error
+			xhr.onerror = function(event) {
+				Titanium.API.error('XHR error: ' + event.error);
+				
+				if (TiQuery.isFunction(s.onError)) {
+					s.onError(xhr, event);
+				}
 			}
-		}
-		
-		// on error
-		xhr.onerror = function(event) {
-			Titanium.API.error('XHR error: ' + event.error);
 			
-			if (TiQuery.fn.isFunction(s.onError)) {
-				s.onError(xhr, event);
+			// open and send the data
+			xhr.open(s.type, s.url);
+			xhr.send(s.data);
+			
+			// clear the object
+			xhr = null;
+			
+			return true;
+		}
+	});
+	
+	var shortcuts = ['get', 'getJSON', 'getXML', 'post', 'postJSON', 'postXML'];
+	
+	for(var i = 0, total = shortcuts.length; i < total; i++) {
+		(function(name) {
+			var type = (name.indexOf('get') != -1) ? 'get' : 'post',
+				dataType;
+				
+			if (name.indexOf('JSON') != -1) {
+				dataType = 'JSON';
+			} else if (name.indexOf('XML') != -1) {
+				dataType = 'XML';
 			}
-		}
-		
-		// open and send the data
-		xhr.open(s.type, s.url);
-		xhr.send(s.data);
-		
-		// clear the object
-		xhr = null;
-	},
-	
-	/**
-	 * shorthand for GET requests
-	 */
-	get: function(url, data, fn) {
-		if (TiQuery.fn.isFunction(data)) {
-			fn = data;
-			data = {};
-		}
-		
-		this.xhr({
-			type:	'get',
-			url:	url,
-			data:	data,
-			onLoad:	fn
-		});
-	},
-	
-	getJSON: function(url, data, fn) {
-		if (TiQuery.fn.isFunction(data)) {
-			fn = data;
-			data = {};
-		}
-		
-		this.xhr({
-			type:	'get',
-			dataType: 'JSON',
-			url:	url,
-			data:	data,
-			onLoad:	fn
-		});
-	},
-	
-	getXML: function(url, data, fn) {
-		if (TiQuery.fn.isFunction(data)) {
-			fn = data;
-			data = {};
-		}
-		
-		this.xhr({
-			type:	'get',
-			dataType: 'XML',
-			url:	url,
-			data:	data,
-			onLoad:	fn
-		});
-	},
-	
-	/**
-	 * shorthand for POST
-	 */
-	post: function(url, data, fn) {
-		if (TiQuery.fn.isFunction(data)) {
-			fn = data;
-			data = {};
-		}
-		
-		this.xhr({
-			type:	'post',
-			url:	url,
-			data:	data,
-			onLoad:	fn
-		});
-	},
-	
-	postJSON: function(url, data, fn) {
-		if (TiQuery.fn.isFunction(data)) {
-			fn = data;
-			data = {};
-		}
-		
-		this.xhr({
-			type:	'post',
-			dataType: 'JSON',
-			url:	url,
-			data:	data,
-			onLoad:	fn
-		});
-	},
-	
-	postXML: function(url, data, fn) {
-		if (TiQuery.fn.isFunction(data)) {
-			fn = data;
-			data = {};
-		}
-		
-		this.xhr({
-			type:	'post',
-			dataType: 'XML',
-			url:	url,
-			data:	data,
-			onLoad:	fn
-		});
+			
+			TiQuery[name] = function(url, data, fn) {
+				if (TiQuery.isFunction(data)) {
+					fn = data;
+					data = {};
+				}
+				
+				this.xhr({
+					type:	type,
+					url:	url,
+					data:	dataType,
+					onLoad:	fn
+				});
+			}
+		})(shortcuts[i]);
 	}
-});
+})(TiQuery);
