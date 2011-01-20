@@ -2,7 +2,7 @@
 * Titanium shortcuts
 */
 (function(TiQuery) {
-	TiQuery.fn.extend({
+	TiQuery.extend({
 		// shortcuts for Titanium.API.info, Titanium.API.error, etc
 		info:		Titanium.API.info,
 		error:		Titanium.API.error,
