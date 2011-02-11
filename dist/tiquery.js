@@ -528,12 +528,16 @@ function now() {
 	
 })(TiQuery);/**
 * XHR
+*
+* @todo add ability to set headers
 */
 (function(TiQuery) {
 	TiQuery.extend({
 		xhrSettings: {
 			type:		'get',
+			data:		'',
 			dataType:	'',
+			timeout:	3000, // milliseconds
 			onError:	null,
 			onLoad:		null,
 			onDataStream: null,
@@ -558,6 +562,9 @@ function now() {
 			xhr.ondatastream = s.onDataStream;
 			xhr.onsendstream = s.onSendStream;
 			xhr.onreadystatechange = s.onReadyStateChange;
+			
+			// set timeout
+			xhr.setTimeout(s.timeout);
 			
 			// on load
 			xhr.onload = function(event) {
@@ -628,10 +635,11 @@ function now() {
 				}
 				
 				this.xhr({
-					type:	type,
-					url:	url,
-					data:	dataType,
-					onLoad:	fn
+					type:		type,
+					url:		url,
+					data:		data,
+					dataType:	dataType,
+					onLoad:		fn
 				});
 			}
 		})(shortcuts[i]);
