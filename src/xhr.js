@@ -1,7 +1,5 @@
 /**
 * XHR
-*
-* @todo add ability to set headers
 */
 (function(TiQuery) {
 	TiQuery.extend({
@@ -10,6 +8,7 @@
 			data:		'',
 			dataType:	'',
 			timeout:	3000, // milliseconds
+			headers:	{},
 			onError:	null,
 			onLoad:		null,
 			onDataStream: null,
@@ -76,8 +75,17 @@
 				}
 			}
 			
-			// open and send the data
+			// open request
 			xhr.open(s.type, s.url);
+			
+			// set headers
+			if ($.isPlainObject(s.headers)) {
+				for(var key in s.headers) {
+					xhr.setRequestHeader(key, s.headers[key]);
+				}
+			}
+			
+			// send request
 			xhr.send(s.data);
 			
 			// clear the object
@@ -100,8 +108,9 @@
 				dataType = 'XML';
 			}
 			
-			TiQuery[name] = function(url, data, fn) {
+			TiQuery[name] = function(url, data, fn, headers) {
 				if (TiQuery.isFunction(data)) {
+					headers = fn || {};
 					fn = data;
 					data = {};
 				}
@@ -111,6 +120,7 @@
 					url:		url,
 					data:		data,
 					dataType:	dataType,
+					headers:	headers,
 					onLoad:		fn
 				});
 			}

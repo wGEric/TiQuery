@@ -1,8 +1,16 @@
 Titanium.include('tiquery.js');
 
-$.get('http://www.google.com', function(data) {
-	$.info(data);
+$.xhr({
+	url:		'http://www.google.com',
+	onLoad:		function(data) {
+		$.info(data);
+	},
+	headers: {one: 'value1', two: 'value2'}
 });
+
+$.get('http://www.google.com', function(data) {
+		$.info(data);
+	}, {three: 'value3', four: 'value4'});
 
 // this sets the background color of the master UIView (when there are no windows/tab groups on it)
 Titanium.UI.setBackgroundColor('#000');
