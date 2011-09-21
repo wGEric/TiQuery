@@ -70,7 +70,69 @@ var label2 = $.Label({
 
 win2.add(label2);
 
+var imagePool = $.pool.get(win2);
+var imageContainer = imagePool.view;
 
+var addImageButton = $.Button({
+	title: 'Add 10 images',
+	zIndex: 10000,
+	right: 0,
+	bottom: 0,
+	width: 125,
+	height: 20
+});
+
+$(addImageButton).click(function() {
+	var i = 0;
+	for(i = 0; i < 10; i += 1) {
+		var now = new Date();
+		var image = $.ImageView({
+			image: 'http://www.cornify.com/getacorn.php?r=' + now.getTime() + '&url=https://github.com/naturalcodeproject/TiQuery',
+		});
+		
+		imageContainer.add(image);
+	}
+});
+
+win2.add(addImageButton);
+
+var releaseButton = $.Button({
+	title: 'Release Memory',
+	zIndex: 10000,
+	right: 140,
+	bottom: 0,
+	width: 125,
+	height: 20
+});
+
+$(releaseButton).click(function() {
+	//imagePool.release();
+	$.pool.releaseAll();
+	
+	// create the view again for use
+	imagePool = $.pool.get(win2);
+	imageContainer = imagePool.view;
+});
+
+win2.add(releaseButton);
+
+var memUsage = $.Label({
+	title: Titanium.Platform.availableMemory,
+	left: 0,
+	bottom: 0,
+	color: '#000000',
+	font:{fontSize:20,fontFamily:'Helvetica Neue'},
+	height: 20,
+	width: 200
+});
+
+win2.add(memUsage);
+
+var updateMem = function() {
+	memUsage.text = Titanium.Platform.availableMemory;
+	setTimeout(updateMem, 1000);
+}
+updateMem();
 
 //
 //  add tabs
