@@ -37,14 +37,26 @@ jsUnity.error = function(messages) {
 var shortcutTests = {
 	suiteName: 'Titanium Shortcuts',
 	
+	testMisc: function() {
+		jsUnity.assertions.assertEqual(Titanium.API.info,	$.info);
+		jsUnity.assertions.assertEqual(Titanium.API.error,	$.error);
+		jsUnity.assertions.assertEqual(Titanium.API.warn,	$.warn);
+		jsUnity.assertions.assertEqual(Titanium.API.log,	$.log);
+		jsUnity.assertions.assertEqual(Titanium.include,	$.include);
+		jsUnity.assertions.assertEqual(Titanium.Database.open, $.db);
+		jsUnity.assertions.assertEqual(Titanium.UI.currentWindow, $.currentWindow);
+	},
+	
 	testAndroid: function() {
-		jsUnity.assertions.assertEqual(Titanium.Android.createBroadcastIntent().toString(),	$.BroadcastIntent().toString());
-		jsUnity.assertions.assertEqual(Titanium.Android.createIntent().toString(),			$.Intent().toString());
-		jsUnity.assertions.assertEqual(Titanium.Android.createIntentChooser().toString(),	$.IntentChooser().toString());
-		jsUnity.assertions.assertEqual(Titanium.Android.createNotification().toString(),	$.Notification().toString());
-		jsUnity.assertions.assertEqual(Titanium.Android.createPendingIntent().toString(),	$.PendingIntent().toString());
-		jsUnity.assertions.assertEqual(Titanium.Android.createService().toString(),			$.Service().toString());
-		jsUnity.assertions.assertEqual(Titanium.Android.createServiceIntent().toString(),	$.ServiceIntent().toString());
+		if (Titanium.Platform.osname == 'android') {
+			jsUnity.assertions.assertEqual(Titanium.Android.createBroadcastIntent().toString(),	$.BroadcastIntent().toString());
+			jsUnity.assertions.assertEqual(Titanium.Android.createIntent().toString(),			$.Intent().toString());
+			jsUnity.assertions.assertEqual(Titanium.Android.createIntentChooser().toString(),	$.IntentChooser().toString());
+			jsUnity.assertions.assertEqual(Titanium.Android.createNotification().toString(),	$.Notification().toString());
+			jsUnity.assertions.assertEqual(Titanium.Android.createPendingIntent().toString(),	$.PendingIntent().toString());
+			jsUnity.assertions.assertEqual(Titanium.Android.createService().toString(),			$.Service().toString());
+			jsUnity.assertions.assertEqual(Titanium.Android.createServiceIntent().toString(),	$.ServiceIntent().toString());
+		}
 	},
 	
 	testContacts: function() {
@@ -131,8 +143,36 @@ var shortcutTests = {
 	}
 };
 
+// event tests. Not sure of the best way to test these so I'll check to make sure they exist
+var eventTests = {
+	suiteName: 'Events',
+	
+	testExists: function() {
+		var events = ['blur', 'cancel', 'click', 'dblclick', 'doubletap', 'focus', 'orientationchange', 'scroll', 'shake', 'singletap', 'swipe', 'touchcancel', 'touchend', 'touchmove', 'touchstart', 'twofingertap'];
+		
+		for(var i = 0, total = events.length; i < total; i++) {
+			jsUnity.assertions.assertNotUndefined($.fn[events[i]]);
+			jsUnity.assertions.assertTrue($.isFunction($.fn[events[i]]));
+		}
+	}
+};
+
+// test xhr requests
+var xhrTests = {
+	suiteName: 'XHR/AJAX',
+	
+	testExists: function() {
+		var shortcuts = ['get', 'getJSON', 'getXML', 'post', 'postJSON', 'postXML'];
+	
+		for(var i = 0, total = shortcuts.length; i < total; i++) {
+			jsUnity.assertions.assertNotUndefined($[shortcuts[i]]);
+			jsUnity.assertions.assertTrue($.isFunction($[shortcuts[i]]));
+		}
+	}
+};
+
 // run the tests
-var results = jsUnity.run(shortcutTests);
+var results = jsUnity.run(shortcutTests, eventTests, xhrTests);
 
 if (results === false) {
 	label.text = 'Invalid tests';
@@ -141,5 +181,5 @@ if (results === false) {
 	'Total: ' + results.total + "\n" +
 	'Passed: ' + results.passed + "\n" +
 	'Failed: ' + results.failed + "\n" +
-	'Time: ' + results.duration;
+	'Time: ' + results.duration + ' ms';
 }
