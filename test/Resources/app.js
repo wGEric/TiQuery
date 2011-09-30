@@ -1,145 +1,145 @@
+/**
+ *  Unit Tests
+ */
 Titanium.include('tiquery.js');
+Titanium.include('jsunity-0.6.js');
 
-$.xhr({
-	url:		'http://www.google.com',
-	onLoad:		function(data) {
-		$.info(data);
+var win = Titanium.UI.createWindow();
+
+var label = Titanium.UI.createLabel({
+	color:'#999',
+	text:'Running Tests...',
+	font: {
+		fontSize:20,
+		fontFamily:'Helvetica Neue'
 	},
-	headers: {one: 'value1', two: 'value2'}
-});
-
-$.get('http://www.google.com', function(data) {
-		$.info(data);
-	}, {three: 'value3', four: 'value4'});
-
-// this sets the background color of the master UIView (when there are no windows/tab groups on it)
-Titanium.UI.setBackgroundColor('#000');
-
-// create tab group
-var tabGroup = $.TabGroup();
-
-
-//
-// create base UI tab and root window
-//
-var win1 = $.Window({  
-    title:'Tab 1',
-    backgroundColor:'#fff'
-});
-var tab1 = $.Tab({  
-    icon:'KS_nav_views.png',
-    title:'Tab 1',
-    window:win1
-});
-
-var label1 = new $.Label({
-	color:'#999',
-	text:'I am Window 1',
-	font:{fontSize:20,fontFamily:'Helvetica Neue'},
 	textAlign:'center',
-	width:'auto'
+	width:'auto',
+	height: 'auto',
 });
 
-win1.add(label1);
+win.add(label);
+win.open();
 
-$(label1).click(function() {
-	alert('click');
-}).click(function() { alert('click2'); });
+// override jsunity's log function to output to the console
+jsUnity.log = function(message) {
+    Titanium.API.info(message);
+};
 
-
-//
-// create controls tab and root window
-//
-var win2 = $.Window({  
-    title:'Tab 2',
-    backgroundColor:'#fff'
-});
-var tab2 = $.Tab({  
-    icon:'KS_nav_ui.png',
-    title:'Tab 2',
-    window:win2
-});
-
-var label2 = $.Label({
-	color:'#999',
-	text:'I am Window 2',
-	font:{fontSize:20,fontFamily:'Helvetica Neue'},
-	textAlign:'center',
-	width:'auto'
-});
-
-win2.add(label2);
-
-var imagePool = $.pool.get(win2);
-var imageContainer = imagePool.view;
-
-var addImageButton = $.Button({
-	title: 'Add 10 images',
-	zIndex: 10000,
-	right: 0,
-	bottom: 0,
-	width: 125,
-	height: 20
-});
-
-$(addImageButton).click(function() {
-	var i = 0;
-	for(i = 0; i < 10; i += 1) {
-		var now = new Date();
-		var image = $.ImageView({
-			image: 'http://www.cornify.com/getacorn.php?r=' + now.getTime() + '&url=https://github.com/naturalcodeproject/TiQuery',
-		});
-		
-		imageContainer.add(image);
-	}
-});
-
-win2.add(addImageButton);
-
-var releaseButton = $.Button({
-	title: 'Release Memory',
-	zIndex: 10000,
-	right: 140,
-	bottom: 0,
-	width: 125,
-	height: 20
-});
-
-$(releaseButton).click(function() {
-	//imagePool.release();
-	$.pool.releaseAll();
-	
-	// create the view again for use
-	imagePool = $.pool.get(win2);
-	imageContainer = imagePool.view;
-});
-
-win2.add(releaseButton);
-
-var memUsage = $.Label({
-	title: Titanium.Platform.availableMemory,
-	left: 0,
-	bottom: 0,
-	color: '#000000',
-	font:{fontSize:20,fontFamily:'Helvetica Neue'},
-	height: 20,
-	width: 200
-});
-
-win2.add(memUsage);
-
-var updateMem = function() {
-	memUsage.text = Titanium.Platform.availableMemory;
-	setTimeout(updateMem, 1000);
+// override jsunity's error function
+jsUnity.error = function(messages) {
+	Titanium.API.error(message);
 }
-updateMem();
 
-//
-//  add tabs
-//
-tabGroup.addTab(tab1);  
-tabGroup.addTab(tab2);  
+/**
+ * tests for shortcuts
+ */
+var shortcutTests = {
+	suiteName: 'Titanium Shortcuts',
+	
+	testAndroid: function() {
+		jsUnity.assertions.assertEqual(Titanium.Android.createBroadcastIntent().toString(),	$.BroadcastIntent().toString());
+		jsUnity.assertions.assertEqual(Titanium.Android.createIntent().toString(),			$.Intent().toString());
+		jsUnity.assertions.assertEqual(Titanium.Android.createIntentChooser().toString(),	$.IntentChooser().toString());
+		jsUnity.assertions.assertEqual(Titanium.Android.createNotification().toString(),	$.Notification().toString());
+		jsUnity.assertions.assertEqual(Titanium.Android.createPendingIntent().toString(),	$.PendingIntent().toString());
+		jsUnity.assertions.assertEqual(Titanium.Android.createService().toString(),			$.Service().toString());
+		jsUnity.assertions.assertEqual(Titanium.Android.createServiceIntent().toString(),	$.ServiceIntent().toString());
+	},
+	
+	testContacts: function() {
+		jsUnity.assertions.assertEqual(Titanium.Contacts.createGroup().toString(),	$.Group().toString());
+		jsUnity.assertions.assertEqual(Titanium.Contacts.createPerson().toString(),	$.Person().toString());
+	},
+	
+	testFacebook: function() {
+		jsUnity.assertions.assertEqual(Titanium.Facebook.createLoginButton().toString(), $.LoginButton().toString());
+	},
+	
+	testFilesystem: function() {
+		jsUnity.assertions.assertEqual(Titanium.Filesystem.createFile().toString(),			$.File().toString());
+		jsUnity.assertions.assertEqual(Titanium.Filesystem.createTempDirectory().toString(), $.TempDirectory().toString());
+		jsUnity.assertions.assertEqual(Titanium.Filesystem.createTempFile().toString(),		$.TempFile().toString());
+	},
+	
+	testMap: function() {
+		jsUnity.assertions.assertEqual(Titanium.Map.createAnnotation().toString(),	$.Annotation().toString());
+		jsUnity.assertions.assertEqual(Titanium.Map.createView().toString(),		$.MapView().toString());
+	},
+	
+	testMedia: function() {
+		jsUnity.assertions.assertEqual(Titanium.Media.createAudioPlayer().toString(),	$.AudioPlayer().toString());
+		jsUnity.assertions.assertEqual(Titanium.Media.createAudioRecorder().toString(),	$.AudioRecorder().toString());
+		// commented out because of Titanium bugs
+		//jsUnity.assertions.assertEqual(Titanium.Media.createItem().toString(),			$.Item().toString());
+		//jsUnity.assertions.assertEqual(Titanium.Media.createMusicPlayer().toString(),	$.MusicPlayer().toString());
+		jsUnity.assertions.assertEqual(Titanium.Media.createSound().toString(),			$.Sound().toString());
+		jsUnity.assertions.assertEqual(Titanium.Media.createVideoPlayer().toString(),	$.VideoPlayer().toString());
+	},
+	
+	testNetwork: function() {
+		jsUnity.assertions.assertEqual(Titanium.Network.createBonjourBrowser().toString(),	$.BonjourBrowser().toString());
+		jsUnity.assertions.assertEqual(Titanium.Network.createBonjourService().toString(),	$.BonjourService().toString());
+		jsUnity.assertions.assertEqual(Titanium.Network.createHTTPClient().toString(),		$.HTTPClient().toString());
+		jsUnity.assertions.assertEqual(Titanium.Network.createTCPSocket().toString(),		$.TCPSocket().toString());
+	},
+	
+	testPlatform: function() {
+		jsUnity.assertions.assertTrue($.UUID().toString().match(/[A-Z0-9]{8}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{12}/));
+	},
+	
+	testStream: function() {
+		//jsUnity.assertions.assertEqual(Titanium.Stream.createStream().toString(), $.Stream().toString());
+	},
+	
+	testUI: function() {
+		jsUnity.assertions.assertEqual(Titanium.UI.create2DMatrix().toString(),		$['2DMatrix']().toString());
+		jsUnity.assertions.assertEqual(Titanium.UI.create3DMatrix().toString(),		$['3DMatrix']().toString());
+		jsUnity.assertions.assertEqual(Titanium.UI.createActivityIndicator().toString(), $.ActivityIndicator().toString());
+		jsUnity.assertions.assertEqual(Titanium.UI.createAlertDialog().toString(),	$.AlertDialog().toString());
+		jsUnity.assertions.assertEqual(Titanium.UI.createAnimation().toString(),	$.Animation().toString());
+		jsUnity.assertions.assertEqual(Titanium.UI.createButton().toString(),		$.Button().toString());
+		jsUnity.assertions.assertEqual(Titanium.UI.createButtonBar().toString(),	$.ButtonBar().toString());
+		jsUnity.assertions.assertEqual(Titanium.UI.createCoverFlowView().toString(), $.CoverFlowView().toString());
+		jsUnity.assertions.assertEqual(Titanium.UI.createDashboardItem().toString(), $.DashboardItem().toString());
+		jsUnity.assertions.assertEqual(Titanium.UI.createDashboardView().toString(), $.DashboardView().toString());
+		jsUnity.assertions.assertEqual(Titanium.UI.createEmailDialog().toString(),	$.EmailDialog().toString());
+		jsUnity.assertions.assertEqual(Titanium.UI.createImageView().toString(),	$.ImageView().toString());
+		jsUnity.assertions.assertEqual(Titanium.UI.createLabel().toString(),		$.Label().toString());
+		jsUnity.assertions.assertEqual(Titanium.UI.createOptionDialog().toString(), $.OptionDialog().toString());
+		jsUnity.assertions.assertEqual(Titanium.UI.createPicker().toString(),		$.Picker().toString());
+		jsUnity.assertions.assertEqual(Titanium.UI.createPickerColumn().toString(),	$.PickerColumn().toString());
+		jsUnity.assertions.assertEqual(Titanium.UI.createPickerRow().toString(),	$.PickerRow().toString());
+		jsUnity.assertions.assertEqual(Titanium.UI.createProgressBar().toString(),	$.ProgressBar().toString());
+		jsUnity.assertions.assertEqual(Titanium.UI.createScrollView().toString(),	$.ScrollView().toString());
+		jsUnity.assertions.assertEqual(Titanium.UI.createScrollableView().toString(), $.ScrollableView().toString());
+		jsUnity.assertions.assertEqual(Titanium.UI.createSearchBar().toString(),	$.SearchBar().toString());
+		jsUnity.assertions.assertEqual(Titanium.UI.createSlider().toString(),		$.Slider().toString());
+		jsUnity.assertions.assertEqual(Titanium.UI.createSwitch().toString(),		$.Switch().toString());
+		jsUnity.assertions.assertEqual(Titanium.UI.createTab().toString(),			$.Tab().toString());
+		jsUnity.assertions.assertEqual(Titanium.UI.createTabGroup().toString(),		$.TabGroup().toString());
+		jsUnity.assertions.assertEqual(Titanium.UI.createTabbedBar().toString(),	$.TabbedBar().toString());
+		jsUnity.assertions.assertEqual(Titanium.UI.createTableView().toString(),	$.TableView().toString());
+		jsUnity.assertions.assertEqual(Titanium.UI.createTableViewRow().toString(),	$.TableViewRow().toString());
+		jsUnity.assertions.assertEqual(Titanium.UI.createTableViewSection().toString(), $.TableViewSection().toString());
+		jsUnity.assertions.assertEqual(Titanium.UI.createTextArea().toString(),		$.TextArea().toString());
+		jsUnity.assertions.assertEqual(Titanium.UI.createTextField().toString(),	$.TextField().toString());
+		jsUnity.assertions.assertEqual(Titanium.UI.createToolbar().toString(),		$.Toolbar().toString());
+		jsUnity.assertions.assertEqual(Titanium.UI.createView().toString(),			$.View().toString());
+		jsUnity.assertions.assertEqual(Titanium.UI.createWebView().toString(),		$.WebView().toString());
+		jsUnity.assertions.assertEqual(Titanium.UI.createWindow().toString(),		$.Window().toString());
+	}
+};
 
+// run the tests
+var results = jsUnity.run(shortcutTests);
 
-// open tab group
-tabGroup.open();
+if (results === false) {
+	label.text = 'Invalid tests';
+} else {
+	label.text = "Tests completed\n" + 
+	'Total: ' + results.total + "\n" +
+	'Passed: ' + results.passed + "\n" +
+	'Failed: ' + results.failed + "\n" +
+	'Time: ' + results.duration;
+}

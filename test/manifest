@@ -1,8 +1,8 @@
-#appname:TiQuery Test
-#publisher:not specified
-#url:https://github.com/naturalcodeproject/TiQuery
-#image:appicon.png
-#appid:com.ericfaerber.tiquery.test
-#desc:not specified
-#type:mobile
-#guid:e45e4a06-2b6b-492d-85df-1986376a3571
+#appname: Tests2
+#publisher: efaerber
+#url: https://github.com/naturalcodeproject/TiQuery
+#image: appicon.png
+#appid: com.tiquery.tests
+#desc: undefined
+#type: ipad
+#guid: dd51047d-9885-429c-80e9-a57616c400af
