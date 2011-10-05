@@ -47,6 +47,21 @@ test("Callbacks", function() {
 	});
 });
 
+test("Error Callback", function() {
+	expect(1);
+	
+	stop();
+	
+	$.http({
+		url: 'http://thisisabogusurladlfjfo.com',
+		onError: function() {
+			ok(true, "onError");
+			
+			start();
+		}
+	});
+});
+
 /*test("POST", function() {
 	expect(1);
 	

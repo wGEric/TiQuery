@@ -92,4 +92,6 @@ QUnit.log = function(result, message) {
 };
 
 // Tests to run
-Titanium.include('qunit-titanium/test/tests_to_run.js');
+Titanium.include('qunit-titanium/test/shortcuts.js');
+Titanium.include('qunit-titanium/test/events.js');
+Titanium.include('qunit-titanium/test/http.js');
