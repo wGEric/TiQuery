@@ -4,13 +4,14 @@
 (function(TiQuery) {
 	TiQuery.extend({
 		// shortcuts for Titanium.API.info, Titanium.API.error, etc
-		info:		Titanium.API.info,
-		error:		Titanium.API.error,
-		warn:		Titanium.API.warn,
-		log:		Titanium.API.log,
-		include:	Titanium.include,
-		db:			Titanium.Database.open,
-		currentWindow: Titanium.UI.currentWindow,
+		info:		function(message) { Titanium.API.info(message); },
+		error:		function(message) { Titanium.API.error(message); },
+		warn:		function(message) { Titanium.API.warn(message); },
+		log:		function(message) { Titanium.API.log(message); },
+		include:	function(file) { Titanium.include(file); },
+		db:			function(name) { return Titanium.Database.open(name); },
+		currentWindow: function() { return Titanium.UI.currentWindow; },
+		currenTab:	function() { return Titanium.UI.currentTab; },
 		
 		// registers shortcuts
 		registerShortcut: function(_namespace, _name, _shortcut, prefix) {

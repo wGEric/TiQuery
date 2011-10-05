@@ -478,7 +478,7 @@ function now() {
 * events
 */
 (function(TiQuery) {
-	TiQuery.fn.extend({
+	TiQuery.extend({
 		/**
 		 * registers an event shortcut
 		 */
@@ -490,8 +490,10 @@ function now() {
 					return this.bind(event, fn);
 				}
 			}
-		},
-		
+		}
+	});
+
+	TiQuery.fn.extend({
 		/**
 		 * binds an event to an object
 		 */
@@ -504,8 +506,8 @@ function now() {
 		/**
 		 * removes an event
 		 */
-		unbind: function(type) {
-			this[0].removeEventListener(type);
+		unbind: function(type, fn) {
+			this[0].removeEventListener(type, fn);
 			
 			return this;
 		},
@@ -523,15 +525,15 @@ function now() {
 	var events = ['blur', 'cancel', 'click', 'dblclick', 'doubletap', 'focus', 'orientationchange', 'scroll', 'shake', 'singletap', 'swipe', 'touchcancel', 'touchend', 'touchmove', 'touchstart', 'twofingertap'];
 	
 	for(var i = 0, total = events.length; i < total; i++) {
-		TiQuery.fn.registerEvent(events[i]);
+		TiQuery.registerEvent(events[i]);
 	}
 	
 })(TiQuery);/**
-* XHR
+* http client
 */
 (function(TiQuery) {
 	TiQuery.extend({
-		xhrSettings: {
+		httpSettings: {
 			type:		'get',
 			data:		'',
 			dataType:	'',
@@ -544,8 +546,8 @@ function now() {
 			onSendStream: null
 		},
 		
-		xhr: function(origSettings) {
-			var s = TiQuery.extend(true, {}, TiQuery.xhrSettings, origSettings);
+		http: function(origSettings) {
+			var s = TiQuery.extend(true, {}, TiQuery.httpSettings, origSettings);
 			
 			if (s.url == null) {
 				return false;
@@ -555,19 +557,19 @@ function now() {
 			s.dataType = s.dataType.toUpperCase();
 			
 			// create the connection
-			var xhr = Titanium.Network.createHTTPClient();
+			var http = Titanium.Network.createHTTPClient();
 			
 			// set callbacks
-			xhr.ondatastream = s.onDataStream;
-			xhr.onsendstream = s.onSendStream;
-			xhr.onreadystatechange = s.onReadyStateChange;
+			http.ondatastream = s.onDataStream;
+			http.onsendstream = s.onSendStream;
+			http.onreadystatechange = s.onReadyStateChange;
 			
 			// set timeout
-			xhr.setTimeout(s.timeout);
+			http.setTimeout(s.timeout);
 			
 			// on load
-			xhr.onload = function(event) {
-				Titanium.API.debug('XHR complete');
+			http.onload = function(event) {
+				Titanium.API.debug('http complete');
 				
 				var results = false;
 				
@@ -590,34 +592,34 @@ function now() {
 				}
 				
 				if (TiQuery.isFunction(s.onLoad)) {
-					s.onLoad(results, xhr, event);
+					s.onLoad(results, http, event);
 				}
 			}
 			
 			// on error
-			xhr.onerror = function(event) {
-				Titanium.API.error('XHR error: ' + event.error);
+			http.onerror = function(event) {
+				Titanium.API.error('http error: ' + event.error);
 				
 				if (TiQuery.isFunction(s.onError)) {
-					s.onError(xhr, event);
+					s.onError(http, event);
 				}
 			}
 			
 			// open request
-			xhr.open(s.type, s.url);
+			http.open(s.type, s.url);
 			
 			// set headers
 			if ($.isPlainObject(s.headers)) {
 				for(var key in s.headers) {
-					xhr.setRequestHeader(key, s.headers[key]);
+					http.setRequestHeader(key, s.headers[key]);
 				}
 			}
 			
 			// send request
-			xhr.send(s.data);
+			http.send(s.data);
 			
 			// clear the object
-			xhr = null;
+			http = null;
 			
 			return true;
 		}
@@ -643,7 +645,7 @@ function now() {
 					data = {};
 				}
 				
-				this.xhr({
+				this.http({
 					type:		type,
 					url:		url,
 					data:		data,
@@ -740,13 +742,14 @@ function now() {
 (function(TiQuery) {
 	TiQuery.extend({
 		// shortcuts for Titanium.API.info, Titanium.API.error, etc
-		info:		Titanium.API.info,
-		error:		Titanium.API.error,
-		warn:		Titanium.API.warn,
-		log:		Titanium.API.log,
-		include:	Titanium.include,
-		db:			Titanium.Database.open,
-		currentWindow: Titanium.UI.currentWindow,
+		info:		function(message) { Titanium.API.info(message); },
+		error:		function(message) { Titanium.API.error(message); },
+		warn:		function(message) { Titanium.API.warn(message); },
+		log:		function(message) { Titanium.API.log(message); },
+		include:	function(file) { Titanium.include(file); },
+		db:			function(name) { return Titanium.Database.open(name); },
+		currentWindow: function() { return Titanium.UI.currentWindow; },
+		currenTab:	function() { return Titanium.UI.currentTab; },
 		
 		// registers shortcuts
 		registerShortcut: function(_namespace, _name, _shortcut, prefix) {

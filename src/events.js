@@ -2,7 +2,7 @@
 * events
 */
 (function(TiQuery) {
-	TiQuery.fn.extend({
+	TiQuery.extend({
 		/**
 		 * registers an event shortcut
 		 */
@@ -14,8 +14,10 @@
 					return this.bind(event, fn);
 				}
 			}
-		},
-		
+		}
+	});
+
+	TiQuery.fn.extend({
 		/**
 		 * binds an event to an object
 		 */
@@ -28,8 +30,8 @@
 		/**
 		 * removes an event
 		 */
-		unbind: function(type) {
-			this[0].removeEventListener(type);
+		unbind: function(type, fn) {
+			this[0].removeEventListener(type, fn);
 			
 			return this;
 		},
@@ -47,7 +49,7 @@
 	var events = ['blur', 'cancel', 'click', 'dblclick', 'doubletap', 'focus', 'orientationchange', 'scroll', 'shake', 'singletap', 'swipe', 'touchcancel', 'touchend', 'touchmove', 'touchstart', 'twofingertap'];
 	
 	for(var i = 0, total = events.length; i < total; i++) {
-		TiQuery.fn.registerEvent(events[i]);
+		TiQuery.registerEvent(events[i]);
 	}
 	
 })(TiQuery);

@@ -22,7 +22,7 @@
             <fileset dir="${SRC_DIR}" includes="intro.js" />
             <fileset dir="${SRC_DIR}" includes="core.js" />
             <fileset dir="${SRC_DIR}" includes="events.js" />
-            <fileset dir="${SRC_DIR}" includes="xhr.js" />
+            <fileset dir="${SRC_DIR}" includes="http.js" />
             <fileset dir="${SRC_DIR}" includes="memory.js" />
             <fileset dir="${SRC_DIR}" includes="titanium.js" />
             <fileset dir="${SRC_DIR}" includes="outro.js" />

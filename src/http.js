@@ -1,9 +1,9 @@
 /**
-* XHR
+* http client
 */
 (function(TiQuery) {
 	TiQuery.extend({
-		xhrSettings: {
+		httpSettings: {
 			type:		'get',
 			data:		'',
 			dataType:	'',
@@ -16,8 +16,8 @@
 			onSendStream: null
 		},
 		
-		xhr: function(origSettings) {
-			var s = TiQuery.extend(true, {}, TiQuery.xhrSettings, origSettings);
+		http: function(origSettings) {
+			var s = TiQuery.extend(true, {}, TiQuery.httpSettings, origSettings);
 			
 			if (s.url == null) {
 				return false;
@@ -27,19 +27,19 @@
 			s.dataType = s.dataType.toUpperCase();
 			
 			// create the connection
-			var xhr = Titanium.Network.createHTTPClient();
+			var http = Titanium.Network.createHTTPClient();
 			
 			// set callbacks
-			xhr.ondatastream = s.onDataStream;
-			xhr.onsendstream = s.onSendStream;
-			xhr.onreadystatechange = s.onReadyStateChange;
+			http.ondatastream = s.onDataStream;
+			http.onsendstream = s.onSendStream;
+			http.onreadystatechange = s.onReadyStateChange;
 			
 			// set timeout
-			xhr.setTimeout(s.timeout);
+			http.setTimeout(s.timeout);
 			
 			// on load
-			xhr.onload = function(event) {
-				Titanium.API.debug('XHR complete');
+			http.onload = function(event) {
+				Titanium.API.debug('http complete');
 				
 				var results = false;
 				
@@ -62,34 +62,34 @@
 				}
 				
 				if (TiQuery.isFunction(s.onLoad)) {
-					s.onLoad(results, xhr, event);
+					s.onLoad(results, http, event);
 				}
 			}
 			
 			// on error
-			xhr.onerror = function(event) {
-				Titanium.API.error('XHR error: ' + event.error);
+			http.onerror = function(event) {
+				Titanium.API.error('http error: ' + event.error);
 				
 				if (TiQuery.isFunction(s.onError)) {
-					s.onError(xhr, event);
+					s.onError(http, event);
 				}
 			}
 			
 			// open request
-			xhr.open(s.type, s.url);
+			http.open(s.type, s.url);
 			
 			// set headers
 			if ($.isPlainObject(s.headers)) {
 				for(var key in s.headers) {
-					xhr.setRequestHeader(key, s.headers[key]);
+					http.setRequestHeader(key, s.headers[key]);
 				}
 			}
 			
 			// send request
-			xhr.send(s.data);
+			http.send(s.data);
 			
 			// clear the object
-			xhr = null;
+			http = null;
 			
 			return true;
 		}
@@ -115,7 +115,7 @@
 					data = {};
 				}
 				
-				this.xhr({
+				this.http({
 					type:		type,
 					url:		url,
 					data:		data,
